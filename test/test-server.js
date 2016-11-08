@@ -13,6 +13,23 @@ describe('Tracks', () => {
 
   Track.collection.drop();
 
+  beforeEach((done) => {
+    const newTrack = new Track({
+      'title': 'newSong', 
+      'artist': 'newArtist', 
+      'genre': 'db', 'plays': 0, 
+      'favorited': false, 
+      'source': 'beatport'
+    });
+    newTrack.save((err) => {
+      done();
+    });
+  });
+  afterEach((done) => {
+    Track.collection.drop();
+    done();
+  });
+
   it('should add a single track on /api/tracks POST', (done) => {
     chai.request(server)
       .post('/api/tracks')
@@ -45,6 +62,20 @@ describe('Tracks', () => {
   			res.should.have.status(200);
   			res.should.be.json;
   			res.body.should.be.a('array');
+        res.body[0].should.be.a('object');
+        res.body[0].should.have.property('title');
+        res.body[0].should.have.property('artist');
+        res.body[0].should.have.property('genre');
+        res.body[0].should.have.property('plays');
+        res.body[0].should.have.property('favorited');
+        res.body[0].should.have.property('source');
+        res.body[0].should.have.property('_id');
+        res.body[0].title.should.equal('newSong');
+        res.body[0].artist.should.equal('newArtist');
+        res.body[0].genre.should.equal('db');
+        res.body[0].plays.should.equal(0);
+        res.body[0].favorited.should.equal(false);
+        res.body[0].source.should.equal('beatport');
   			done();
   		});
   });
