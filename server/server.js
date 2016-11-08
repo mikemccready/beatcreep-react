@@ -6,6 +6,12 @@ const bodyParser = require('body-parser');
 const app = express();
 const PORT = 3000;
 
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/beatcreep-react');
+mongoose.connection.once('open', () => {
+  console.log('connected to mongodb');
+});
+
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
