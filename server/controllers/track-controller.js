@@ -46,4 +46,16 @@ trackController.updateTrackById = (req, res) => {
 	})
 }
 
+trackController.deleteTrackById = (req, res) => {
+	Track.remove({ _id: req.body.id }, (err, data) => {
+		if (err) throw err;
+		res.status(200);
+		return res.send('Track Deleted').end();		
+	})
+}
+
 module.exports = trackController;
+
+
+
+

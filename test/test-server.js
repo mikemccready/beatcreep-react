@@ -131,7 +131,19 @@ describe('Tracks', () => {
       });
   });
 
-  it('should delete a single track on /api/track/<id> DELETE');
+  it('should delete a single track on /api/track/<id> DELETE', (done) => {
+    chai.request(server)
+      .get('/api/tracks')
+      .end((err, res) => {
+        chai.request(server)
+          .delete('/api/track/' + res.body[0]._id)
+          .end((error, response) => {
+            response.should.have.status(200);
+            response.text.should.equal('Track Deleted');
+            done();
+          });
+      });
+  });
 });
 
 
