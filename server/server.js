@@ -2,6 +2,7 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+const trackController = require('./controllers/track-controller');
 
 const app = express();
 const PORT = 3000;
@@ -22,13 +23,9 @@ app.get('/', (req, res) => {
 });
 
 // track api routes
-app.get('/api/tracks', (req, res) => {
-	console.log(req.body)
-});
+app.get('/api/tracks', trackController.getTracks);
 
-app.post('/api/tracks', (req, res) => {
-
-});
+app.post('/api/tracks', trackController.saveTrack);
 
 
 // start server
