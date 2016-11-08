@@ -1,12 +1,17 @@
 // test-server.js
+process.env.NODE_ENV = 'test';
+
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const server = require('../server/server');
+const Track = require('../server/models/Track')
 const should = chai.should();
 
 chai.use(chaiHttp);
 
 describe('Tracks', () => {
+
+  Track.collection.drop();
 
   it('should add a single track on /api/tracks POST', (done) => {
     chai.request(server)
@@ -44,9 +49,22 @@ describe('Tracks', () => {
   		});
   });
 
-  it('should list a single track on /api/track/<id> GET');
+  it('should list a single track on /api/track/<id> GET', (done) => {
+    chai.request(server)
+      .get('/api/track')
+      .end((err, res) => {
+        res.should.have.status(200);
+        res.should.be.json;
+        res.body.should.be.a('object');
+        done()
+      });
+  });
 
   it('should update a single track on /api/track/<id> PUT');
 
   it('should delete a single track on /api/track/<id> DELETE');
 });
+
+
+
+

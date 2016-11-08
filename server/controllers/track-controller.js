@@ -17,7 +17,6 @@ trackController.saveTrack = (req, res) => {
 		res.setHeader('Content-Type', 'application/json');
 		return res.send(JSON.stringify(track)).end();
 	})
-
 }
 
 trackController.getTracks = (req, res) => {

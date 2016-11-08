@@ -9,9 +9,13 @@ const PORT = 3000;
 
 // database connections
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/beatcreep-react');
-mongoose.connection.once('open', () => {
-  console.log('connected to mongodb');
+const config = require('./config');
+mongoose.connect(config.mongoURI[app.settings.env], (err) => {
+	if (err) {
+		console.log('error connecting to mongodb', err);
+	} else {
+		console.log('connected to mongodb', config.mongoURI[app.settings.env]);
+	}
 });
 
 // middleware
