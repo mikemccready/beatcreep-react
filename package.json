@@ -1,0 +1,11 @@
+{
+  "name": "beatcreep-react",
+  "version": "1.0.0",
+  "description": "Curated music box, playlist compiled by scraping beatport dj charts",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mike McCready",
+  "license": "ISC"
+}
