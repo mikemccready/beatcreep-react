@@ -3,6 +3,30 @@ const Track = require('../models/Track');
 
 let trackController = {};
 
+trackController.saveTracksFromScraper = (req, res, trackData) => {
+	let filteredTracks = []
+	for (let track in trackData) {
+		if(trackData[track].charted > 4) {
+			filteredTracks.push(trackData[track])
+		}
+	}
+
+	filteredTracks.forEach((track) => {
+		let newTrack = new Track({
+			artist: track.artist,
+			title: track.title,
+			genre: track.genre,
+			charted: track.charted,
+		})
+
+		newTrack.save((err, newTr) => {
+			if (err) return console.err(err);
+		})
+	})
+
+	return res.end()
+}
+
 trackController.saveTrack = (req, res) => {
 	let newTrack = new Track();
 
@@ -47,7 +71,7 @@ trackController.updateTrackById = (req, res) => {
 }
 
 trackController.deleteTrackById = (req, res) => {
-	Track.remove({ _id: req.body.id }, (err, data) => {
+	Track.remove({ _id: req.params.track_id }, (err, data) => {
 		if (err) throw err;
 		res.status(200);
 		return res.send('Track Deleted').end();		
