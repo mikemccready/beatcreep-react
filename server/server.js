@@ -30,6 +30,7 @@ app.get('/', (req, res) => {
 app.get('/api/tracks', trackController.getTracks);
 app.post('/api/tracks', trackController.saveTrack);
 app.get('/api/track/:track_id', trackController.getTrackById);
+app.put('/api/track/:track_id', trackController.updateTrackById);
 
 
 // start server

@@ -114,7 +114,22 @@ describe('Tracks', () => {
     })
   });
 
-  it('should update a single track on /api/track/<id> PUT');
+  it('should update a single track on /api/track/<id> PUT', (done) => {
+    chai.request(server)
+      .get('/api/tracks')
+      .end((err, res) => {
+        chai.request(server)
+          .put('/api/track/' + res.body[0]._id)
+          .send({'favorited': true})
+          .end((error, response) => {
+            response.should.have.status(200);
+            response.should.be.json;
+            response.body.should.be.a('object');
+            response.body.favorited.should.equal(true);
+            done();
+          });
+      });
+  });
 
   it('should delete a single track on /api/track/<id> DELETE');
 });

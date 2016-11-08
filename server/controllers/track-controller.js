@@ -37,4 +37,13 @@ trackController.getTrackById = (req, res) => {
 	})
 }
 
+trackController.updateTrackById = (req, res) => {
+	Track.findByIdAndUpdate(req.params.track_id, req.body, {new: true}, (err, track) => {
+		if (err) throw err;
+		res.status(200);
+		res.setHeader('Content-Type', 'application/json');
+		return res.send(track).end();		
+	})
+}
+
 module.exports = trackController;
