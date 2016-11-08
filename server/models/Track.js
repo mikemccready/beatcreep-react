@@ -7,6 +7,7 @@ const trackSchema = new Schema({
 	title: String,
 	artist: String,
 	genre: String,
+	charted: { type: Number, default: 0 },
 	plays: { type: Number, default: 0 },
 	favorited: { type: Boolean, default: false },
 	source: String,

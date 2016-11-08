@@ -2,6 +2,7 @@
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+const webscraper = require('./web-scraper/web-scraper');
 const trackController = require('./controllers/track-controller');
 
 const app = express();
@@ -25,6 +26,9 @@ app.use(bodyParser.json());
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname + './../index.html'));
 });
+
+// web-scraper
+app.post('/api/webscraper', webscraper.scrape)
 
 // track api routes
 app.get('/api/tracks', trackController.getTracks);
