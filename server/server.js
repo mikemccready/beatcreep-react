@@ -28,8 +28,8 @@ app.get('/', (req, res) => {
 
 // track api routes
 app.get('/api/tracks', trackController.getTracks);
-
 app.post('/api/tracks', trackController.saveTrack);
+app.get('/api/track/:track_id', trackController.getTrackById);
 
 
 // start server

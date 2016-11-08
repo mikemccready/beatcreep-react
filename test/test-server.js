@@ -81,14 +81,37 @@ describe('Tracks', () => {
   });
 
   it('should list a single track on /api/track/<id> GET', (done) => {
-    chai.request(server)
-      .get('/api/track')
-      .end((err, res) => {
-        res.should.have.status(200);
-        res.should.be.json;
-        res.body.should.be.a('object');
-        done()
-      });
+    const newTrack = new Track({
+      'title': 'newSong', 
+      'artist': 'newArtist', 
+      'genre': 'db', 'plays': 0, 
+      'favorited': false, 
+      'source': 'beatport'
+    });
+
+    newTrack.save((err, track) => {
+      chai.request(server)
+        .get('/api/track/' + track.id)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.should.be.json;
+          res.body.should.be.a('object');
+          res.body.should.have.property('title');
+          res.body.should.have.property('artist');
+          res.body.should.have.property('genre');
+          res.body.should.have.property('plays');
+          res.body.should.have.property('favorited');
+          res.body.should.have.property('source');
+          res.body.should.have.property('_id');
+          res.body.title.should.equal('newSong');
+          res.body.artist.should.equal('newArtist');
+          res.body.genre.should.equal('db');
+          res.body.plays.should.equal(0);
+          res.body.favorited.should.equal(false);
+          res.body.source.should.equal('beatport');          
+          done()
+        });
+    })
   });
 
   it('should update a single track on /api/track/<id> PUT');

@@ -28,4 +28,13 @@ trackController.getTracks = (req, res) => {
 	})
 }
 
+trackController.getTrackById = (req, res) => {
+	Track.findById(req.params.track_id, (err, track) => {
+		if (err) throw err;
+		res.status(200);
+		res.setHeader('Content-Type', 'application/json');
+		return res.send(track).end();
+	})
+}
+
 module.exports = trackController;
