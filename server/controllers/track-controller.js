@@ -13,16 +13,20 @@ trackController.saveTrack = (req, res) => {
 
 	newTrack.save((err, track) => {
 		if (err) throw err;
-
-		res.setHeader('Content-Type', 'application/json');
 		res.status(200);
-		return res.send(JSON.stringify(track));
+		res.setHeader('Content-Type', 'application/json');
+		return res.send(JSON.stringify(track)).end();
 	})
 
 }
 
 trackController.getTracks = (req, res) => {
-	console.log('getTracks', req.body)
+	Track.find({}, (err, tracks) => {
+		if (err) throw err;
+		res.status(200);
+		res.setHeader('Content-Type', 'application/json');
+		return res.send(tracks).end();
+	})
 }
 
 module.exports = trackController;
