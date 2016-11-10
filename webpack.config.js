@@ -5,7 +5,7 @@ const webpack = require('webpack');
 const buildDirectory = './dist/';
 
 module.exports = {
-  entry: './index.js',
+  entry: './client/index.js',
   devServer: {
     hot: true,
     inline: true,
