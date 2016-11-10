@@ -63,6 +63,25 @@ export default class App extends React.Component {
 		this.setState({genres: genreList})
 	}
 
+	loadPlayer(e, track) {
+		SC.get('/tracks', {
+		  q: track.artist + ' ' + track.title, title: track.title
+		}).then(function(tracks) {
+		  tracks.sort(function(a, b) {
+		  	return b.likes_count - a.likes_count;
+		  })
+
+			const track_url = tracks[0].permalink_url;
+			const download_url = tracks[0].stream_url;
+
+			SC.oEmbed(track_url, { auto_play: true }).then(function(oEmbed) {
+			  document.getElementById('player').innerHTML = oEmbed.html;
+			});
+		}); 
+		// this.setState({nowPlayingTrackId: track._id});
+		// console.log(this.state.nowPlayingTrackId)
+	}
+
 	selectGenre(e) {
 		let genre = e.target.innerHTML;
 		this.setState({selectedGenre: genre});
@@ -79,7 +98,7 @@ export default class App extends React.Component {
 
 	render() {
 		let tracks = this.state.filteredTracks.map((track, i) => {
-				return <Track key={i} trackData={track} />
+				return <Track key={i} trackData={track} loadPlayer={this.loadPlayer} />
 			}
 		)
 		return(
