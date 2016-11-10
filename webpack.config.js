@@ -29,14 +29,21 @@ module.exports = {
     'react/lib/ReactContext': true,
   },
   module: {
-    loaders: [{
-      test: /\.jsx?$/,
-      exclude: /(node_modules|bower_components)/,
-      loader: 'babel',
-      query: {
-        presets: ['react', 'es2015', 'stage-0'],
+    loaders: [
+      {
+        test: /\.jsx?$/,
+        exclude: /(node_modules|bower_components)/,
+        loader: 'babel',
+        query: {
+          presets: ['react', 'es2015', 'stage-0'],
+        },
       },
-    }],
+      {
+        test: /\.scss$/,
+        loaders: ['style', 'css', 'sass'],
+        include: path.join(__dirname, 'client')
+      }
+    ],
   },
   plugins: [],
 };
