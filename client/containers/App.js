@@ -13,8 +13,11 @@ export default class App extends React.Component {
     	filteredTracks: [],
     	genres: {},
     	selectedGenre: 'All genres',
-    	menuOpen: 'false'
+    	menuOpen: 'false',
+    	nowPlayingId: null
     }
+
+    this.loadPlayer = this.loadPlayer.bind(this);
     this.selectGenre = this.selectGenre.bind(this);
     this.toggleMenu = this.toggleMenu.bind(this);
   }
@@ -80,7 +83,7 @@ export default class App extends React.Component {
 			  document.getElementById('player').innerHTML = oEmbed.html;
 			});
 		}); 
-		// this.setState({nowPlayingTrackId: track._id});
+		this.setState({nowPlayingId: track._id});
 		// console.log(this.state.nowPlayingTrackId)
 	}
 
@@ -107,7 +110,10 @@ export default class App extends React.Component {
 
 	render() {
 		let tracks = this.state.filteredTracks.map((track, i) => {
-				return <Track key={i} trackData={track} loadPlayer={this.loadPlayer} />
+				return <Track key={i} 
+						trackData={track} 
+						loadPlayer={this.loadPlayer} 
+						nowPlayingId={this.state.nowPlayingId} />
 			}
 		)
 		return(
