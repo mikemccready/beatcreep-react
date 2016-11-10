@@ -3,12 +3,14 @@ import React from 'react';
 import config from '../../config-secret.js';
 
 import Track from '../components/Track';
+import Selector from '../components/Selector';
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
     	tracks: [],
+    	genres: {}
     }
   }
 
@@ -29,13 +31,28 @@ export default class App extends React.Component {
 			if (xhr.readyState === 4 && xhr.status === 200) {
 				let trackData = JSON.parse(xhr.responseText)
 				this.setState({tracks: trackData});
-				// this.setState({tracks: trackData, filteredTracks: trackData})
-				// this.sortTracksDesc();
-				// this.populateSelector();
+				this.sortTracksDesc();
+				this.getGenres();
 			}
 		}
 		xhr.open('GET', '/api/tracks');
 		xhr.send();
+	}
+
+	getGenres() {
+		let genreList = {}
+		this.state.tracks.forEach((track) => {
+			if (!genreList[track.genre]) genreList[track.genre] = true;
+		});
+		this.setState({genres: genreList})
+	}
+
+	sortTracksDesc() {
+		const tracks = this.state.tracks.slice();
+		tracks.sort((a, b) => {
+			return b.charted - a.charted;
+		})
+		this.setState({tracks: tracks})
 	}
 
 	render() {
@@ -45,6 +62,7 @@ export default class App extends React.Component {
 		)
 		return(
 			<div>
+				<Selector genres={this.state.genres} />
 				{tracks}
 			</div>
 		)

@@ -8,7 +8,7 @@ export default function Track(props) {
 
 	return (
 	<div>
-		{artist}  <span className="genre">{genre}</span>
+		{artist}  <span className="genre">{genre}</span>{props.trackData.charted}
     	<h5>{title}</h5>
 	</div>
 	)
