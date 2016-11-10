@@ -5,7 +5,6 @@ export default function Selector(props) {
 	const genres = [];
 
 	for (let genre in props.genres) {
-		console.log(genre)
 		genres.push(genre);
 	}
 

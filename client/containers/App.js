@@ -14,6 +14,7 @@ export default class App extends React.Component {
     	genres: {},
     	selectedGenre: 'All genres'
     }
+    this.selectGenre = this.selectGenre.bind(this);
   }
 
 	componentDidMount() {
@@ -27,23 +28,36 @@ export default class App extends React.Component {
 		});
 	}
 
+	filterTracks(genre) {
+		if (genre === 'All genres') {
+			return this.setState({filteredTracks: this.state.tracks});
+		}
+
+		let filtered = this.state.tracks.filter(track => {
+			if (track.genre === genre) {
+				return track;
+			}
+		})
+
+		this.setState({filteredTracks: filtered});
+	}
+
 	getTracks() {
 		let xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = () => {
 			if (xhr.readyState === 4 && xhr.status === 200) {
 				let trackData = JSON.parse(xhr.responseText)
-				this.setState({tracks: trackData});
-				this.sortTracksDesc();
-				this.getGenres();
+				this.sortTracksDesc(trackData);
+				this.getGenres(trackData);
 			}
 		}
 		xhr.open('GET', '/api/tracks');
 		xhr.send();
 	}
 
-	getGenres() {
+	getGenres(trackData) {
 		let genreList = {}
-		this.state.tracks.forEach((track) => {
+		trackData.forEach((track) => {
 			if (!genreList[track.genre]) genreList[track.genre] = true;
 		});
 		this.setState({genres: genreList})
@@ -51,20 +65,20 @@ export default class App extends React.Component {
 
 	selectGenre(e) {
 		let genre = e.target.innerHTML;
-
-
+		this.setState({selectedGenre: genre});
+		this.filterTracks(genre);
 	}
 
-	sortTracksDesc() {
-		const tracks = this.state.tracks.slice();
-		tracks.sort((a, b) => {
+	sortTracksDesc(trackData) {
+		trackData.sort((a, b) => {
 			return b.charted - a.charted;
 		})
-		this.setState({tracks: tracks})
+		this.setState({tracks: trackData});
+		this.setState({filteredTracks: trackData});
 	}
 
 	render() {
-		let tracks = this.state.tracks.map((track, i) => {
+		let tracks = this.state.filteredTracks.map((track, i) => {
 				return <Track key={i} trackData={track} />
 			}
 		)
