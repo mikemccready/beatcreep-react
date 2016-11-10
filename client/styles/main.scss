@@ -1,0 +1,133 @@
+// main.scss
+html, body {
+	margin: 0;
+	padding: 0;
+	background-color: white;
+	font-family: 'Akzidenz-Grotesk BQ';
+	font-weight: lighter;
+	color: rgba(0,0,0,.4);
+}
+
+body {
+	position: absolute;
+	top: 0;
+	width: 100vw;
+	height: 100vh;
+	overflow: scroll;
+}
+
+h1 {
+	text-align: center;
+	font-size: 1.5em;
+	letter-spacing: 2.5vw;
+	color: black;
+	margin: 3.5em auto 2.5em;
+}
+
+// #container {
+// 	padding-bottom: 10em;
+// }
+
+// .loader {
+// 	opacity: 1;
+// 	transition: opacity 1s;
+// 	display: block;
+//     margin: 0 auto;
+// }
+
+// .loadedTracks {
+// 	opacity: 0;
+// 	transition: opacity 1s;
+// 	text-align: center;
+// 	width: 25em;
+// 	margin: 0 auto;
+// }
+
+// #genre-selector {
+// 	appearance: none;
+//     margin: 0 auto 1.5em;
+//     display: block; 
+//     font-size: 1em; 
+//     border: none;
+//     height: 1.75em;
+//     width: 100%; 
+//     background: rgba(0,0,0,.1);
+// }
+
+// #genre-selector option {
+// 	line-height: 1.25em;
+// }
+
+// .track {
+// 	position: relative;
+// 	width: 100%;
+// 	letter-spacing: .125em;
+// 	font-size: .75em;
+// 	padding: 1em 0;
+// 	background-color: rgba(255,255,255.9);
+// 	text-align: left;
+// }
+
+// .playing {
+// 	background-color: rgba(0,0,0,.05);
+// 	padding-left: 1.5em;
+// 	transition: .5s;
+// }
+
+// .notPlaying {
+// 	background-color: white;
+// 	padding-left: 0em;
+// 	transition: .5s;
+// }
+
+// .track h5 {
+// 	color: black;
+// 	cursor: pointer;
+// 	letter-spacing: 0;
+//     font-weight: normal;
+//     font-size: 1.125em;
+//     margin-top: 0.5em;
+//     letter-spacing: .125em;
+//     margin-bottom: 0;
+// }.track h5:hover {
+// 	cursor: pointer;
+// 	color: #F84A1F;
+// 	transition: .5s;
+// }
+
+// .genre {
+// 	color: #F84A1F;
+// 	opacity: .4;
+// }
+
+// .falseStar {
+// 	position: absolute;
+// 	top: 2em;
+// 	right: 0;
+// 	cursor: pointer;
+// 	background-image: url(../assets/grayStar.png);
+// 	height: 1.5em;
+// 	width: 1.5em;
+// 	background-size: cover;
+// }
+
+// .trueStar {
+// 	position: absolute;
+// 	top: 2em;
+// 	right: 0;
+// 	cursor: pointer;
+// 	background-image: url(../assets/blackStar.png);
+// 	height: 1.5em;
+// 	width: 1.5em;
+// 	background-size: cover;
+// }
+
+#player {
+    position: fixed;
+    height: 4em;
+    width: 25em;
+    bottom: 0;
+    right: 0;
+}
+
+
