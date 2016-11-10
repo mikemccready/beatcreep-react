@@ -10,7 +10,9 @@ export default class App extends React.Component {
     super(props);
     this.state = {
     	tracks: [],
-    	genres: {}
+    	filteredTracks: [],
+    	genres: {},
+    	selectedGenre: 'All genres'
     }
   }
 
@@ -47,6 +49,12 @@ export default class App extends React.Component {
 		this.setState({genres: genreList})
 	}
 
+	selectGenre(e) {
+		let genre = e.target.innerHTML;
+
+
+	}
+
 	sortTracksDesc() {
 		const tracks = this.state.tracks.slice();
 		tracks.sort((a, b) => {
@@ -62,7 +70,7 @@ export default class App extends React.Component {
 		)
 		return(
 			<div>
-				<Selector genres={this.state.genres} />
+				<Selector genres={this.state.genres} selected={this.state.selectedGenre} selectGenre={this.selectGenre} />
 				{tracks}
 			</div>
 		)
