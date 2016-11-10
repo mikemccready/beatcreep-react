@@ -12,9 +12,11 @@ export default class App extends React.Component {
     	tracks: [],
     	filteredTracks: [],
     	genres: {},
-    	selectedGenre: 'All genres'
+    	selectedGenre: 'All genres',
+    	menuOpen: 'false'
     }
     this.selectGenre = this.selectGenre.bind(this);
+    this.toggleMenu = this.toggleMenu.bind(this);
   }
 
 	componentDidMount() {
@@ -83,8 +85,9 @@ export default class App extends React.Component {
 	}
 
 	selectGenre(e) {
-		let genre = e.target.innerHTML;
+		let genre = e.target.innerHTML.replace(/&amp;/g, '&');
 		this.setState({selectedGenre: genre});
+		this.setState({menuOpen: false});
 		this.filterTracks(genre);
 	}
 
@@ -96,14 +99,25 @@ export default class App extends React.Component {
 		this.setState({filteredTracks: trackData});
 	}
 
+	toggleMenu() {
+		const menuState = !this.state.menuOpen;
+		console.log(menuState)
+		this.setState({menuOpen: menuState});
+	}
+
 	render() {
 		let tracks = this.state.filteredTracks.map((track, i) => {
 				return <Track key={i} trackData={track} loadPlayer={this.loadPlayer} />
 			}
 		)
 		return(
-			<div>
-				<Selector genres={this.state.genres} selected={this.state.selectedGenre} selectGenre={this.selectGenre} />
+			<div className="app-container">
+				<Selector 
+					genres={this.state.genres} 
+					selected={this.state.selectedGenre} 
+					selectGenre={this.selectGenre}
+					toggleMenu={this.toggleMenu}
+					menuOpen={this.state.menuOpen} />
 				{tracks}
 			</div>
 		)

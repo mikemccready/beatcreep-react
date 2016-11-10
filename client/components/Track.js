@@ -7,8 +7,8 @@ export default function Track(props) {
 	const artist = props.trackData.artist.toUpperCase().replace(/&AMP;/g, '&');
 
 	return (
-	<div>
-		{artist}  <span className="genre">{genre}</span>{props.trackData.charted}
+	<div className="track">
+		{artist}  <span className="genre">{genre}</span>
     	<h5 onClick={(e) => {props.loadPlayer(e, props.trackData)}}>{title}</h5>
 	</div>
 	)
