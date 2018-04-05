@@ -1,9 +1,14 @@
 // App.js
-import React from 'react';
-import config from '../../config-secret.js';
+import React from 'react'
+import ReactPlayer from 'react-soundcloud-widget'
+import axios from 'axios'
 
-import Track from '../components/Track';
-import Selector from '../components/Selector';
+import Track from '../components/Track'
+import Selector from '../components/Selector'
+import Creeper from '../components/Creeper/Creeper'
+import MobileMenu from '../components/MobileMenu/MobileMenu'
+
+import config from '../../config-secret.js'
 
 export default class App extends React.Component {
   constructor(props) {
@@ -13,13 +18,17 @@ export default class App extends React.Component {
     	filteredTracks: [],
     	genres: {},
     	selectedGenre: 'All genres',
-    	menuOpen: 'false',
-    	nowPlayingId: null
-    }
+    	menuOpen: false,
+      results: null,
+      resultIndex: null,
+      shuffle: true,
 
-    this.loadPlayer = this.loadPlayer.bind(this);
-    this.selectGenre = this.selectGenre.bind(this);
-    this.toggleMenu = this.toggleMenu.bind(this);
+      nowPlayingId: null,
+      playingIndex: null,
+      playingUrl: null,
+      playing: false,
+      SC_source: null,
+    }
   }
 
 	componentDidMount() {
@@ -33,99 +42,182 @@ export default class App extends React.Component {
 		});
 	}
 
-	filterTracks(genre) {
-		if (genre === 'All genres') {
-			return this.setState({filteredTracks: this.state.tracks});
-		}
-
-		let filtered = this.state.tracks.filter(track => {
-			if (track.genre === genre) {
-				return track;
-			}
-		})
-
-		this.setState({filteredTracks: filtered});
+	filterTracks() {
+    // const genre = this.state.selectedGenre
+    //
+		// if (genre === 'All genres') {
+		// 	return this.setState({filteredTracks: this.state.tracks});
+		// }
+    //
+		// let filtered = this.state.tracks.filter(track => {
+		// 	if (track.genre === genre) return track;
+		// })
+		// this.setState({filteredTracks: filtered});
 	}
 
 	getTracks() {
-		let xhr = new XMLHttpRequest();
-		xhr.onreadystatechange = () => {
-			if (xhr.readyState === 4 && xhr.status === 200) {
-				let trackData = JSON.parse(xhr.responseText)
-				this.sortTracksDesc(trackData);
-				this.getGenres(trackData);
-			}
-		}
-		xhr.open('GET', '/api/tracks');
-		xhr.send();
+    axios.get('/api/tracks')
+    .then(data => {
+      this.setState({ tracks: data.data, filteredTracks: data.data }, () => {
+        this.shuffleTracks()
+        this.getGenres()
+      })
+    })
 	}
 
-	getGenres(trackData) {
-		let genreList = {}
-		trackData.forEach((track) => {
-			if (!genreList[track.genre]) genreList[track.genre] = true;
-		});
-		this.setState({genres: genreList})
+	getGenres() {
+		let genres = {}
+    this.state.tracks.forEach(track => {
+			if (!genres[track.genre]) genres[track.genre] = true
+		})
+		this.setState({ genres })
 	}
 
-	loadPlayer(e, track) {
-		SC.get('/tracks', {
-		  q: track.artist + ' ' + track.title, title: track.title
-		}).then(function(tracks) {
-		  tracks.sort(function(a, b) {
-		  	return b.likes_count - a.likes_count;
-		  })
-
-			const track_url = tracks[0].permalink_url;
-			const download_url = tracks[0].stream_url;
-
-			SC.oEmbed(track_url, { auto_play: true }).then(function(oEmbed) {
-			  document.getElementById('player').innerHTML = oEmbed.html;
-			});
-		}); 
-		this.setState({nowPlayingId: track._id});
-		// console.log(this.state.nowPlayingTrackId)
+	loadPlayer(track) {
+		SC.get('/tracks', { q: track.artist + ' ' + track.title, title: track.title })
+    .then(tracks => {
+      this.setState({ results: tracks, resultIndex: 0 })
+			const playingUrl = tracks[0].permalink_url
+      this.setState({nowPlayingId: track._id, playingUrl, SC_source: tracks[0] })
+		})
 	}
+
+  togglePlay() {
+    const iframe = document.querySelector('#react-sc-widget')
+    const widget = SC.Widget(iframe)
+    widget.toggle()
+  }
+
+  nextTrack() {
+    const currentIndex = this.state.playingIndex;
+    this.loadPlayer(this.state.filteredTracks[currentIndex + 1])
+    this.setState({ playingIndex: currentIndex + 1})
+  }
+
+  research() {
+    const resultIndex = this.state.resultIndex + 1
+    const playingUrl = this.state.results[resultIndex].permalink_url
+    const SC_source = this.state.results[resultIndex]
+    this.setState({ resultIndex, playingUrl, SC_source })
+  }
 
 	selectGenre(e) {
-		let genre = e.target.innerHTML.replace(/&amp;/g, '&');
-		this.setState({selectedGenre: genre});
-		this.setState({menuOpen: false});
-		this.filterTracks(genre);
+    const selectedGenre = e.target.innerHTML
+		this.setState({ selectedGenre, menuOpen: false }, () => this.filterTracks())
 	}
 
-	sortTracksDesc(trackData) {
-		trackData.sort((a, b) => {
-			return b.charted - a.charted;
-		})
-		this.setState({tracks: trackData});
-		this.setState({filteredTracks: trackData});
+	sortTracksDesc() {
+		const tracks = this.state.filteredTracks.sort((a, b) => b.charted - a.charted)
+		this.setState({ filteredTracks: tracks, shuffle: false })
 	}
+
+  shuffleTracks() {
+    const tracks = this.state.filteredTracks
+    let currentIndex = tracks.length, temporaryValue, randomIndex
+
+    while (0 !== currentIndex) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+      temporaryValue = tracks[currentIndex];
+      tracks[currentIndex] = tracks[randomIndex];
+      tracks[randomIndex] = temporaryValue;
+    }
+
+    this.setState({ filteredTracks: tracks, shuffle: true })
+  }
 
 	toggleMenu() {
-		const menuState = !this.state.menuOpen;
-		console.log(menuState)
-		this.setState({menuOpen: menuState});
+		const menuState = !this.state.menuOpen
+		this.setState({menuOpen: menuState})
 	}
 
+  likeTrack() {
+    const { playingIndex, filteredTracks, SC_source } = this.state
+    const currentTrack = filteredTracks[playingIndex]
+    currentTrack.SC_source = SC_source
+    currentTrack.favorited = true
+
+    let favorites = localStorage.getItem('favorites') ?
+      JSON.parse(localStorage.getItem('favorites')) : {}
+
+    favorites[SC_source.id] = currentTrack
+
+    localStorage.setItem('favorites', JSON.stringify(favorites))
+  }
+
+  searchTracks(query) {
+    const searched = this.state.tracks.filter(track => {
+      if (track.artist.toLowerCase().includes(query.toLowerCase())) return track
+      if (track.title.toLowerCase().includes(query.toLowerCase())) return track
+    })
+
+    this.setState({ filteredTracks: searched }, () => {
+      if (this.state.shuffle) return this.shuffleTracks()
+      return this.sortTracksDesc()
+    })
+  }
+
 	render() {
-		let tracks = this.state.filteredTracks.map((track, i) => {
-				return <Track key={i} 
-						trackData={track} 
-						loadPlayer={this.loadPlayer} 
-						nowPlayingId={this.state.nowPlayingId} />
+    const { filteredTracks, nowPlayingId, playingIndex, playing, SC_source } = this.state
+
+    let currentTrack = filteredTracks[playingIndex]
+
+		let tracks = filteredTracks.map((track, i) => {
+				return <Track key={i}
+            index={i}
+						trackData={track}
+            nextTrack={e => this.loadPlayer(filteredTracks[i + 1])}
+						loadPlayer={track => this.loadPlayer(track)}
+						nowPlayingId={nowPlayingId}
+            updatePlayIndex={i => this.setState({ playingIndex: i })}
+            research={() => this.research()} />
 			}
 		)
+
 		return(
 			<div className="app-container">
-				<Selector 
-					genres={this.state.genres} 
-					selected={this.state.selectedGenre} 
-					selectGenre={this.selectGenre}
-					toggleMenu={this.toggleMenu}
-					menuOpen={this.state.menuOpen} />
-				{tracks}
+        <div className="list-container">
+          <h1>BEATCREEP <button>...</button></h1>
+
+          <MobileMenu
+            shuffle={this.state.shuffle}
+            shuffleTracks={() => this.shuffleTracks()}
+            sortTracksDesc={() => this.sortTracksDesc()}
+            searchTracks={query => this.searchTracks(query)} />
+
+          {
+            this.state.playingUrl &&
+            <ReactPlayer
+              opts={{ auto_play: true }}
+              url={this.state.playingUrl}
+              onPlay={() => this.setState({ playing: true })}
+              onPause={() => this.setState({ playing: false })}
+              onEnd={() => this.nextTrack()} />
+          }
+
+          { tracks }
+
+        </div>
+
+        {
+          SC_source &&
+          <Creeper
+            playing={playing}
+            SC_source={SC_source}
+            research={() => this.research()}
+            togglePlay={() => this.togglePlay()}
+            nextTrack={() => this.nextTrack()}
+            likeTrack={() => this.likeTrack()} />
+        }
 			</div>
 		)
 	}
 }
+
+
+// <Selector
+// 	genres={this.state.genres}
+// 	selected={this.state.selectedGenre}
+// 	selectGenre={e => this.selectGenre(e)}
+// 	toggleMenu={() => this.toggleMenu()}
+// 	menuOpen={this.state.menuOpen} />
